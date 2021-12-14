@@ -11,16 +11,16 @@ class Server:
             :param path: URI for the handler
             :return:
             """
+            print("Youhou connecté")
             await websocket.send("J'suis chauve.")
-            data = await websocket.recv()
 
-            reply = f"Data received as:  {data}!"
-
-            await websocket.send(reply)
+            while True:
+                data = await websocket.recv()
+                reply = f"Data received as:  {data}!"
+                await websocket.send(reply)
 
         start_server = websockets.serve(client_handler, "localhost", 8000)
 
         asyncio.get_event_loop().run_until_complete(start_server)
 
         asyncio.get_event_loop().run_forever()
-
