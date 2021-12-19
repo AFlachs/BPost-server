@@ -14,7 +14,6 @@ def main():
     test.select_contacts('jszpirer')
     test.add_contact('jszpirer', 'gszpirer')
     test.select_contacts('jszpirer')
-    test.close_connection()
 
 if __name__ == '__main__':
     main()
