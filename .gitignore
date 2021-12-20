@@ -130,3 +130,4 @@ dmypy.json
 /src/client_db.db
 /src/message_db.db
 /src/client&messages_db.db
+/src/database.db

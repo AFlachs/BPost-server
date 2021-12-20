@@ -117,9 +117,10 @@ class ClientMessages_Database:
         if self.client_in_database(username):
             self.__open_connection()
             self.cursor.execute("SELECT password FROM clients WHERE username = ?;", (username,))
-            data = self.cursor.fetchall()
+            password = self.cursor.fetchall()
+            data = password[0][0]
             self.__close_connection()
-        return data[0][0]
+        return data
 
     def __split_contacts(self, current_contacts):
         """Makes a list with the string containing all contacts."""
@@ -150,6 +151,8 @@ class ClientMessages_Database:
             self.cursor.execute(sql_insert_contact, (new_password, username))
             self.connection.commit()
             self.__close_connection()
+            return True
+        return False
 
     def insert_new_message(self, username1, message, username2):
         self.__open_connection()
