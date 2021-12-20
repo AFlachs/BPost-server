@@ -128,3 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /src/client_db.db
+/src/message_db.db
+/src/client&messages_db.db
