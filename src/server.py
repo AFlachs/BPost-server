@@ -20,9 +20,12 @@ class Server:
                     await self.manage_message(message, websocket)
             except websockets.exceptions.ConnectionClosed as e:
                 print("Client", websocket, " has disconnected")
-                print(e)
+                for connected in self.usernameWebsocket:
+                    print(connected)
+                # print(e)
             finally:
                 self.clients.remove(websocket)
+                self.usernameWebsocket = {key: val for key, val in self.usernameWebsocket.items() if val != websocket}
                 print("Connection closed")
 
         self.clients = set()
@@ -30,7 +33,7 @@ class Server:
         self.messages_to_send = dict()
         self.usernameWebsocket = dict()
 
-        self.database = ClientMessages_Database("database.db")
+        self.database = ClientMessages_Database(pathlib.Path(__file__).with_name("database.db"))
         self.sep = sep
 
         # TLS configuration (called ssl but is TLS)
@@ -76,10 +79,9 @@ class Server:
         username2 = split_message[3]
         if self.database.client_in_database(username2) and self.database.client_in_database(username1):
             """We need to say to user1 that his/her was well sent."""
-            print("Message well sent")
             await self.send_message("0" + self.sep + "OK" + self.sep + username2, username1)
             """We need to send the message to user2 and save it into the database."""
-            print("Sending message to user2")
+            print("Sending message to", username2)
             await self.send_message("5" + self.sep + message + self.sep + username1, username2)
             self.database.insert_new_message(username1, message, username2)
         else:

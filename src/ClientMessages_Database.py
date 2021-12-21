@@ -99,7 +99,7 @@ class ClientMessages_Database:
         list_of_contacts = self.__split_contacts(current_contacts)
         if self.__contact_already_registered(contact_to_add, list_of_contacts):
             print("The new contact already is in the list.")
-            return
+            return False
         if self.client_in_database(contact_to_add):
             self.__open_connection()
             if list_of_contacts[0] == "":
@@ -112,9 +112,10 @@ class ClientMessages_Database:
             self.cursor.execute(sql_insert_contact, (new_contacts, username))
             self.connection.commit()
             self.__close_connection()
+            return True
         else:
             print("The contact is not a client in our database.")
-            return
+            return False
 
     def select_contacts(self, username):
         """Returns the current contacts of client with username."""
@@ -187,7 +188,7 @@ class ClientMessages_Database:
 
     def select_public_key(self, username):
         self.__open_connection()
-        sql_request = """SELECT pubic_key FROM clients WHERE username = '""" + username + """';"""
+        sql_request = """SELECT public_key FROM clients WHERE username = '""" + username + """';"""
         self.cursor.execute(sql_request)
         data = self.cursor.fetchall()
         return data[0][0]
