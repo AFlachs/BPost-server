@@ -50,8 +50,8 @@ class ClientMessages_Database:
 
     def insert_new_client(self, username, password):
         """Insert a new client in the database if he/she is not already in it."""
-        if password == "":
-            print("The password can't be empty.")
+        if password == "" or username == "":
+            print("The password or username can't be empty.")
             return False
         if self.client_in_database(username):
             print("The client already exists.")
@@ -68,6 +68,9 @@ class ClientMessages_Database:
 
     def set_public_key(self, username, public_key):
         """Set the public of the user with username."""
+        if public_key == "":
+            print("Public key cannot be empty.")
+            return
         self.__open_connection()
         sql_insert_contact = """UPDATE clients 
                                                 SET public_key = ?
@@ -75,7 +78,6 @@ class ClientMessages_Database:
         self.cursor.execute(sql_insert_contact, (public_key, username))
         self.connection.commit()
         self.__close_connection()
-
 
     def client_in_database(self, username):
         """Check if a client is already in the database."""
@@ -177,7 +179,7 @@ class ClientMessages_Database:
 
     def select_and_display_all_messages(self, username):
         self.__open_connection()
-        sql_select = """SELECT * FROM messages WHERE username1 = '"""+username+"""';"""
+        sql_select = """SELECT * FROM messages WHERE username1 = '""" + username + """';"""
         self.cursor.execute(sql_select)
         data = self.cursor.fetchall()
         for row in data:
@@ -185,7 +187,7 @@ class ClientMessages_Database:
 
     def select_public_key(self, username):
         self.__open_connection()
-        sql_request = """SELECT pubic_key FROM clients WHERE username = '"""+username+"""';"""
+        sql_request = """SELECT pubic_key FROM clients WHERE username = '""" + username + """';"""
         self.cursor.execute(sql_request)
         data = self.cursor.fetchall()
         return data[0][0]
