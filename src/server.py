@@ -68,7 +68,7 @@ class Server:
         else:
             """The format is not OK."""
             print("Erreur")
-            self.send_message("")
+            self.send_error_message("", websocket)
 
     def try_to_send_message(self, split_message):
         """Need to analyze the split_message to check if the second user is in the DB."""
@@ -78,7 +78,7 @@ class Server:
         if self.database.client_in_database(username2) and self.database.client_in_database(username1):
             """We need to say to user1 that his/her was well sent."""
             print("Message well sent")
-            self.send_message("0" + self.sep + "WillBeSent" + self.sep + username2, username1)
+            self.send_message("0" + self.sep + "OK" + self.sep + username2, username1)
             """We need to send the message to user2 and save it into the database."""
             print("Sending message to user2")
             self.send_message("5" + self.sep + message + self.sep + username1, username2)
@@ -97,7 +97,7 @@ class Server:
             self.usernameWebsocket[username] = websocket
             self.checkUnreadMessages(username)
             print("Client logged in.")
-            self.send_message("1" + self.sep + "AuthOK", username)
+            self.send_message("1" + self.sep + "OK", username)
         else:
             """Something went wrong."""
             print("Log in failed.")
@@ -111,7 +111,7 @@ class Server:
             """The new client is in the database, we can add him/her in the dict."""
             self.usernameWebsocket[username] = websocket
             print("New client in the db.")
-            self.send_message("2" + self.sep + "AccOK", username)
+            self.send_message("2" + self.sep + "OK", username)
         else:
             print("Creation of account failed")
             self.send_error_message("2" + self.sep + "Error", websocket)
@@ -123,7 +123,7 @@ class Server:
         new_password = split_message[3]
         if self.database.modify_password(username, current_password, new_password):
             print("The password has been changed.")
-            self.send_message("3" + self.sep + "PassOK", username)
+            self.send_message("3" + self.sep + "OK", username)
         else:
             print("Changing password has failed.")
             self.send_message("3" + self.sep + "Error", username)
@@ -136,7 +136,7 @@ class Server:
             """A new contact has been added."""
             print("New contact in list.")
             public_key_new_contact = self.database.select_public_key(contact)
-            self.send_message("4" + self.sep + "ContOK" + self.sep + public_key_new_contact, username)
+            self.send_message("4" + self.sep + "OK" + self.sep + public_key_new_contact, username)
         else:
             print("New contact not added.")
             self.send_message("4" + self.sep + "Error", username)
