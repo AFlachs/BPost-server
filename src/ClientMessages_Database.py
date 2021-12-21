@@ -30,7 +30,8 @@ class ClientMessages_Database:
         sql_request = """CREATE TABLE IF NOT EXISTS clients(
                                 username text PRIMARY KEY,
                                 password text NOT NULL,
-                                contacts text NOT NULL);"""
+                                contacts text NOT NULL,
+                                public_key text NOT NULL);"""
         try:
             self.cursor.execute(sql_request)
         except Error as e:
@@ -58,11 +59,23 @@ class ClientMessages_Database:
         else:
             print("Client doesn't exist so we're gonna add it.")
             self.__open_connection()
-            sql_insert_client = """INSERT INTO clients VALUES('""" + username + """','""" + password + """','');"""
+            # Public key is empty at first but will be set later.
+            sql_insert_client = """INSERT INTO clients VALUES('""" + username + """','""" + password + """','','');"""
             self.cursor.execute(sql_insert_client)
             self.connection.commit()
             self.__close_connection()
             return True
+
+    def set_public_key(self, username, public_key):
+        """Set the public of the user with username."""
+        self.__open_connection()
+        sql_insert_contact = """UPDATE clients 
+                                                SET public_key = ?
+                                                WHERE username = ?;"""
+        self.cursor.execute(sql_insert_contact, (public_key, username))
+        self.connection.commit()
+        self.__close_connection()
+
 
     def client_in_database(self, username):
         """Check if a client is already in the database."""
@@ -169,3 +182,10 @@ class ClientMessages_Database:
         data = self.cursor.fetchall()
         for row in data:
             print(row)
+
+    def select_public_key(self, username):
+        self.__open_connection()
+        sql_request = """SELECT pubic_key FROM clients WHERE username = '"""+username+"""';"""
+        self.cursor.execute(sql_request)
+        data = self.cursor.fetchall()
+        return data[0][0]

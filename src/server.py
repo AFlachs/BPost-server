@@ -62,6 +62,9 @@ class Server:
         elif nb_instruction == 4:
             """A client wants to add a new contact."""
             self.try_to_add_contact(split_message)
+        elif nb_instruction == 6:
+            """Set the public key after creation of account."""
+            self.set_public_key(split_message)
         else:
             """The format is not OK."""
             print("Erreur")
@@ -132,17 +135,25 @@ class Server:
         if self.database.add_contact(username, contact):
             """A new contact has been added."""
             print("New contact in list.")
-            self.send_message("4" + self.sep + "ContOK", username)
+            public_key_new_contact = self.database.select_public_key(contact)
+            self.send_message("4" + self.sep + "ContOK" + self.sep + public_key_new_contact, username)
         else:
             print("New contact not added.")
             self.send_message("4" + self.sep + "Error", username)
+
+    def set_public_key(self, split_message):
+        """A client is trying to set his/her public key."""
+        username = split_message[1]
+        public_key = split_message[2]
+        self.database.set_public_key(username, public_key)
+        print("Public key set up.")
 
     async def send_message(self, message, username):
         """Function that will send a message to a user."""
         # We have two possibilities : the user is connected or not. We can check the dict to see that.
         if username in self.usernameWebsocket:
             # The user is connected, we can take his/her websocket.
-            ws = self[username]
+            ws = self.usernameWebsocket[username]
             await ws.send(message)
         else:
             # We need to add the message to the messages_to_send list.
