@@ -5,9 +5,8 @@ SEP = "<SEP>"
 
 
 def main():
-    print("Hello")
-    serv = Server(SEP)
     print("Welcome in BPost-Server")
+    serv = Server(SEP)
 
 if __name__ == '__main__':
     main()

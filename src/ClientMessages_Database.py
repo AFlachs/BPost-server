@@ -3,6 +3,11 @@ from sqlite3 import Error
 
 
 class ClientMessages_Database:
+    """
+    Location : Name of the file that will contain the database.
+    Connection : Connection to the database, we need to have one for this database.
+    Cursor : Cursor to execute sql request for the database.
+    """
     location = None
     connection = None
     cursor = None
@@ -171,6 +176,7 @@ class ClientMessages_Database:
         return False
 
     def insert_new_message(self, username1, message, username2):
+        """Insert a new message in the messages database."""
         self.__open_connection()
         sql_insert = """INSERT INTO messages VALUES(datetime('now'),'""" + username1 + """','""" + message \
                      + """','""" + username2 + """');"""
@@ -179,6 +185,7 @@ class ClientMessages_Database:
         self.__close_connection()
 
     def select_and_display_all_messages(self, username):
+        """Select and display all the messages sent by username."""
         self.__open_connection()
         sql_select = """SELECT * FROM messages WHERE username1 = '""" + username + """';"""
         self.cursor.execute(sql_select)
@@ -187,6 +194,7 @@ class ClientMessages_Database:
             print(row)
 
     def select_public_key(self, username):
+        """Select the public key of username."""
         self.__open_connection()
         sql_request = """SELECT public_key FROM clients WHERE username = '""" + username + """';"""
         self.cursor.execute(sql_request)
