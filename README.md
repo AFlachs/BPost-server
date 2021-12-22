@@ -5,12 +5,11 @@ BPost is a Messaging App implemented for the project of the Communication Networ
 
 # Execute
 To launch the server part of the project, execute the file src/main.py within a Python Virtual Environment. 
+All modules used in the App are listed in the requirements.txt document. These allow users to build an adapted Python Virtual Environment.
 
 # Structure
 
 The source code is in src.
-
-All modules used in the App are listed in the requirements.txt document. These allow users to build an adapted Python Virtual Environment.
 
 # Functionalities
 
