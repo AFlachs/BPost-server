@@ -82,11 +82,11 @@ class Server:
 
     async def try_to_send_message(self, split_message):
         """Need to analyze the split_message to check if the second user is in the DB."""
-        while self.database_lock:
-            await asyncio.sleep(0.3)
         username1 = split_message[1]
         message = split_message[2]
         username2 = split_message[3]
+        while self.database_lock:
+            await asyncio.sleep(0.3)
         self.database_lock = True
         if self.database.client_in_database(username2) and self.database.client_in_database(username1):
             self.database_lock = False
@@ -95,6 +95,8 @@ class Server:
             """We need to send the message to user2 and save it into the database."""
             print("Sending message to", username2)
             await self.send_message("5" + self.sep + message + self.sep + username1, username2)
+            while self.database_lock:
+                await asyncio.sleep(0.3)
             self.database_lock = True
             self.database.insert_new_message(username1, message, username2)
             self.database_lock = False
@@ -106,10 +108,10 @@ class Server:
 
     async def try_to_login(self, split_message, websocket):
         """A client is trying to log in the database."""
-        while self.database_lock:
-            await asyncio.sleep(0.3)
         username = split_message[1]
         password = split_message[2]
+        while self.database_lock:
+            await asyncio.sleep(0.3)
         self.database_lock = True
         if self.database.check_password(username, password):
             self.database_lock = False
@@ -126,10 +128,10 @@ class Server:
 
     async def try_to_create_account(self, split_message, websocket):
         """A new client is trying to create an account."""
-        while self.database_lock:
-            await asyncio.sleep(0.3)
         username = split_message[1]
         password = split_message[2]
+        while self.database_lock:
+            await asyncio.sleep(0.3)
         self.database_lock = True
         if self.database.insert_new_client(username, password):
             self.database_lock = False
@@ -144,11 +146,11 @@ class Server:
 
     async def try_to_change_password(self, split_message):
         """A client is trying to change his/her password."""
-        while self.database_lock:
-            await asyncio.sleep(0.3)
         username = split_message[1]
         current_password = split_message[2]
         new_password = split_message[3]
+        while self.database_lock:
+            await asyncio.sleep(0.3)
         self.database_lock = True
         if self.database.modify_password(username, current_password, new_password):
             self.database_lock = False
@@ -161,15 +163,17 @@ class Server:
 
     async def try_to_add_contact(self, split_message):
         """A client is trying to add a new contact to his/her list."""
-        while self.database_lock:
-            await asyncio.sleep(0.3)
         username = split_message[1]
         contact = split_message[2]
+        while self.database_lock:
+            await asyncio.sleep(0.3)
         self.database_lock = True
         if self.database.add_contact(username, contact):
             self.database_lock = False
             """A new contact has been added."""
             print("New contact in list.")
+            while self.database_lock:
+                await asyncio.sleep(0.3)
             self.database_lock = True
             public_key_new_contact = self.database.select_public_key(contact)
             self.database_lock = False
@@ -181,10 +185,10 @@ class Server:
 
     async def set_public_key(self, split_message):
         """A client is trying to set his/her public key."""
-        while self.database_lock:
-            await asyncio.sleep(0.3)
         username = split_message[1]
         public_key = split_message[2]
+        while self.database_lock:
+            await asyncio.sleep(0.3)
         self.database_lock = True
         self.database.set_public_key(username, public_key)
         self.database_lock = False
